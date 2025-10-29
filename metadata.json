@@ -1,0 +1,5 @@
+{
+  "name": "Interactive Spring Boot & Thymeleaf Course",
+  "description": "An interactive course designed for React & TypeScript developers to learn Java Spring Boot with Thymeleaf from scratch. It covers project setup, core concepts, Thymeleaf templating, data persistence, and building a complete To-Do list application.",
+  "requestFramePermissions": []
+}
