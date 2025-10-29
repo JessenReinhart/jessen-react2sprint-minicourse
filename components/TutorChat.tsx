@@ -3,18 +3,11 @@ import type { Lesson, ChatMessage } from '../types';
 import { GoogleGenAI } from '@google/genai';
 import { X, Send, Bot, User, Loader } from 'lucide-react';
 
-const API_KEY = process.env.API_KEY;
-if (!API_KEY) {
-  // In a real app, you'd handle this more gracefully.
-  // Here we assume it's always available in the execution environment.
-  console.warn("API_KEY environment variable not set.");
-}
-const ai = new GoogleGenAI({ apiKey: API_KEY! });
-
 interface TutorChatProps {
   lesson: Lesson;
   moduleTitle: string;
   onClose: () => void;
+  apiKey: string;
 }
 
 // Function to strip HTML for a cleaner context
@@ -44,7 +37,7 @@ const lessonToText = (lesson: Lesson, moduleTitle: string): string => {
 };
 
 
-export const TutorChat: React.FC<TutorChatProps> = ({ lesson, moduleTitle, onClose }) => {
+export const TutorChat: React.FC<TutorChatProps> = ({ lesson, moduleTitle, onClose, apiKey }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -84,6 +77,8 @@ export const TutorChat: React.FC<TutorChatProps> = ({ lesson, moduleTitle, onClo
         ${lessonContext}
         ---
         `;
+        
+        const ai = new GoogleGenAI({ apiKey });
 
         const response = await ai.models.generateContent({
           model: 'gemini-2.5-flash',
@@ -103,7 +98,7 @@ export const TutorChat: React.FC<TutorChatProps> = ({ lesson, moduleTitle, onClo
       console.error('Error calling Gemini API:', error);
       const errorMessage: ChatMessage = {
         role: 'model',
-        content: 'Sorry, I encountered an error. Please try again.',
+        content: 'Sorry, I encountered an error. This could be due to an invalid API key or a network issue. Please try again.',
       };
       setMessages(prev => [...prev, errorMessage]);
     } finally {
